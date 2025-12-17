@@ -1,0 +1,42 @@
+# ============================================================================
+# ENTROPIC TIME CONSTRAINT SIMULATOR - REQUIREMENTS
+# ============================================================================
+# This file lists all dependencies for reproducing the simulations and
+# calculations in "The Entropic Time Constraint" paper.
+#
+# To install: pip install -r requirements.txt
+# ============================================================================
+
+# Core Physics & Mathematics Libraries
+numpy==1.24.3             # Array operations and linear algebra
+scipy==1.10.1             # Scientific computing and integration
+pandas==2.0.3             # Data manipulation and CSV export
+
+# Visualization & Plotting
+matplotlib==3.7.1         # Publication-quality figures and plots
+
+# Development & Testing (optional)
+pytest==7.4.0             # For running test suites
+black==23.3.0             # Code formatting
+flake8==6.0.0             # Code linting
+
+# Documentation (optional)
+jupyter==1.0.0            # For creating interactive notebooks
+sphinx==7.0.1             # For generating documentation
+
+# Advanced Features (optional for future extensions)
+plotly==5.14.1            # Interactive web-based visualizations
+seaborn==0.12.2           # Statistical data visualization
+sympy==1.12               # Symbolic mathematics for equation verification
+tqdm==4.65.0              # Progress bars for Monte Carlo simulations
+numba==0.57.0             # Just-in-time compilation for speed
+
+# ============================================================================
+# VERSION NOTES:
+# - These versions are tested and known to work together
+# - Most features work with older versions (numpy>=1.21, matplotlib>=3.4)
+# - For reproducibility in publications, consider using exact versions
+# ============================================================================
+
+# Environment specification for conda:
+# conda create -n entropic-time python=3.10 numpy scipy pandas matplotlib
