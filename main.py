@@ -1,7 +1,6 @@
 """
 entropic_time_simulator.py - COMPLETE FIXED VERSION
-Complete implementation with all visualizations and calculations.
-Fixed all issues with proper explanations.
+Fixed array handling in minimum_time method.
 """
 
 import numpy as np
@@ -9,7 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button
 import pandas as pd
 from dataclasses import dataclass
-from typing import List, Tuple, Dict, Any, Optional
+from typing import List, Tuple, Dict, Any, Optional, Union
 import warnings
 import sys
 import os
@@ -203,15 +202,46 @@ class EntropicTimeCalculator:
         return df
     
     # ============================================================================
-    # CORE CALCULATIONS
+    # CORE CALCULATIONS - FIXED VERSION
     # ============================================================================
     
     @staticmethod
-    def minimum_time(tau_sigma: float, delta_sigma: float) -> float:
-        """Calculates Δt ≥ τ_Σ ΔΣ."""
-        if tau_sigma <= 0 or delta_sigma <= 0:
-            return 0.0
-        return tau_sigma * delta_sigma
+    def minimum_time(tau_sigma: Union[float, np.ndarray], 
+                    delta_sigma: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
+        """Calculates Δt ≥ τ_Σ ΔΣ. Handles both scalars and arrays."""
+        # Convert to numpy arrays if needed
+        if isinstance(tau_sigma, (list, tuple)):
+            tau_sigma = np.array(tau_sigma)
+        if isinstance(delta_sigma, (list, tuple)):
+            delta_sigma = np.array(delta_sigma)
+        
+        # Handle scalar case
+        if np.isscalar(tau_sigma) and np.isscalar(delta_sigma):
+            if tau_sigma <= 0 or delta_sigma <= 0:
+                return 0.0
+            return tau_sigma * delta_sigma
+        
+        # Handle array case
+        result = np.zeros_like(tau_sigma) if not np.isscalar(tau_sigma) else np.zeros_like(delta_sigma)
+        
+        if not np.isscalar(tau_sigma) and not np.isscalar(delta_sigma):
+            # Both are arrays
+            mask = (tau_sigma > 0) & (delta_sigma > 0)
+            result[mask] = tau_sigma[mask] * delta_sigma[mask]
+        elif not np.isscalar(tau_sigma):
+            # tau_sigma is array, delta_sigma is scalar
+            if delta_sigma <= 0:
+                return result
+            mask = tau_sigma > 0
+            result[mask] = tau_sigma[mask] * delta_sigma
+        else:
+            # delta_sigma is array, tau_sigma is scalar
+            if tau_sigma <= 0:
+                return result
+            mask = delta_sigma > 0
+            result[mask] = tau_sigma * delta_sigma[mask]
+        
+        return result
     
     def measurement_time(self, tau_sigma: float, state: QuantumState) -> float:
         """Calculates Δt_meas ≥ τ_Σ k_B [H(P) - S(ρ)]."""
@@ -334,7 +364,7 @@ class EntropicTimeCalculator:
             return f"{seconds:.2e} s"
     
     # ============================================================================
-    # VISUALIZATION FUNCTIONS
+    # VISUALIZATION FUNCTIONS - ALL FIXED
     # ============================================================================
     
     def plot_core_bound(self, save_path: str = None, show: bool = True):
@@ -1216,6 +1246,8 @@ def main():
             break
         except Exception as e:
             print(f"\nError: {str(e)}")
+            import traceback
+            traceback.print_exc()
             print("Please try again.")
 
 if __name__ == "__main__":
